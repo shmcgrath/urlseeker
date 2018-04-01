@@ -16,18 +16,18 @@ def create_html_file(filePath, fileName):
     htmlFile = filePath + '/' + today + '-' + fileName + '.html'
     print('Creating Netscape HTML Bookmarks file at ' + htmlFile)
     htmlBookmarks = open(htmlFile, 'w')
-    htmlBookmarks.write('<!DOCTYPE NETSCAPE-Bookmark-file-1>\n')
-    htmlBookmarks.write('    <!--This is an automatically generated file.\n')
-    htmlBookmarks.write('    It will be read and overwritten.\n')
-    htmlBookmarks.write('    Do Not Edit! -->\n')
-    htmlBookmarks.write('    <Title>'+ today + ' Bookmarks</Title>\n')
-    htmlBookmarks.write('    <H1>Bookmarks</H1>\n')
-    htmlBookmarks.write('    <DL>')
+    htmlBookmarks.write('<!DOCTYPE NETSCAPE-Bookmark-file-1>')
+    htmlBookmarks.write('\n    <!--This is an automatically generated file.')
+    htmlBookmarks.write('\n    It will be read and overwritten.')
+    htmlBookmarks.write('\n    Do Not Edit! -->')
+    htmlBookmarks.write('\n    <Title>'+ today + ' Bookmarks</Title>')
+    htmlBookmarks.write('\n    <H1>Bookmarks</H1>')
+    htmlBookmarks.write('\n    <DL>')
 
     return htmlBookmarks
 
-def write_html_bookmark(htmlBookmarks, title, url):
-        bookmark = '\n      <DT><A HREF="' + url + '">' + title + '</A>'
+def write_html_bookmark(htmlBookmarks, title, url, tags):
+        bookmark = '\n      <DT><A HREF="' + url + '" TAGS="' + tags + '">' + title + '</A>'
         htmlBookmarks.write(bookmark)
 
 def write_html_footer(htmlBookmarks):

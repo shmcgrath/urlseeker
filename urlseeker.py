@@ -6,6 +6,7 @@ import os
 import sys
 import bookmarkfiles
 import accionewsblur
+import accioreddit
 from collections import Mapping
 import logging
 from logging.config import fileConfig
@@ -20,6 +21,7 @@ def account_information():
         redditPassword = accountinfo.REDDIT_PASSWORD
         redditClientId = accountinfo.REDDIT_CLIENT_ID
         redditClientSecret = accountinfo.REDDIT_CLIENT_SECRET
+        redditUserAgent = accountinfo.REDDIT_USER_AGENT
         newsblurUsername = accountinfo.NEWSBLUR_USERNAME
         newsblurPassword = accountinfo.NEWSBLUR_PASSWORD
     except ImportError:
@@ -27,7 +29,7 @@ def account_information():
         print('error importing account information from accountinfo.py')
         exit(1)
 
-    if not redditUsername or not redditPassword or not redditClientId or not redditClientSecret or not newsblurUsername or not newsblurPassword:
+    if not redditUsername or not redditPassword or not redditClientId or not redditClientSecret or not redditUserAgent or not newsblurUsername or not newsblurPassword:
         logging.info('hitting the not')
         exit(1)
 
@@ -36,6 +38,7 @@ def account_information():
         'redditPassword': redditPassword,
         'redditClientId': redditClientId,
         'redditClientSecret': redditClientSecret,
+        'redditUserAgent': redditUserAgent,
         'newsblurUsername': newsblurUsername,
         'newsblurPassword': newsblurPassword,
     }
@@ -50,6 +53,7 @@ def main():
     logging.debug('main finished')
     accionewsblur.login(user['newsblurUsername'], user['newsblurPassword'])
     accionewsblur.get_starred_stories()
+    #logging.debug(redditAccessToken)
 
 if __name__ == '__main__':
     main()

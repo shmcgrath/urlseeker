@@ -96,7 +96,7 @@ def get_starred_stories():
         for starredStory in userStarredStories:
             newBookmark = get_bookmark_detail(starredStory)
             bookmarkfiles.write_html_bookmark(netscapeBookmarks,
-                    newBookmark.title, newBookmark.url)
+                    newBookmark.title, newBookmark.url, newBookmark.tagString)
 
         currentPage+=1
 
