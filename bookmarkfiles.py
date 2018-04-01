@@ -8,12 +8,11 @@ from collections import Mapping
 from pathlib import Path
 
 def get_today_string():
-    today = datetime.datetime.now().strftime('%Y-%m-%d-%H.%M')
+    today = datetime.datetime.now().strftime('%Y-%m-%d-%H.%M.%S')
     return today
 
-def create_html_file(filePath, fileName):
+def create_html_file(htmlFile):
     today = get_today_string()
-    htmlFile = filePath + '/' + today + '-' + fileName + '.html'
     print('Creating Netscape HTML Bookmarks file at ' + htmlFile)
     htmlBookmarks = open(htmlFile, 'w')
     htmlBookmarks.write('<!DOCTYPE NETSCAPE-Bookmark-file-1>')
@@ -21,7 +20,7 @@ def create_html_file(filePath, fileName):
     htmlBookmarks.write('\n    It will be read and overwritten.')
     htmlBookmarks.write('\n    Do Not Edit! -->')
     htmlBookmarks.write('\n    <Title>'+ today + ' Bookmarks</Title>')
-    htmlBookmarks.write('\n    <H1>Bookmarks</H1>')
+    htmlBookmarks.write('\n    <H1>' + today + ' Bookmarks</H1>')
     htmlBookmarks.write('\n    <DL>')
 
     return htmlBookmarks

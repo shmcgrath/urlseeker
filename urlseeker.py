@@ -51,6 +51,9 @@ def main():
     logging.debug('main called')
     user = account_information();
     logging.debug('main finished')
+    #TODO: gather args about what services i should be pulling down when i run
+    # the script (all, reddit, newsblur, twitter, pinboard, hacker news)
+    #TODO: add a flag for various output types (bookmark, to pinboard, csv, markdown)
     #accionewsblur.login(user['newsblurUsername'], user['newsblurPassword'])
     #accionewsblur.get_starred_stories()
     redditAccessToken = accioreddit.login(user['redditUsername'], user['redditPassword'], user['redditClientId'], user['redditClientSecret'], user['redditUserAgent'])

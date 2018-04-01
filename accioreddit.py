@@ -6,6 +6,7 @@ import logging
 import os
 import sys
 import bookmark
+import datetime
 import bookmarkfiles
 from collections import Mapping
 from pathlib import Path
@@ -46,6 +47,10 @@ def login(redditUser, redditPass, redditClientId, redditClientSecret, redditUser
 
     return redditAccessString
 
+def get_today_string():
+    today = datetime.datetime.now().strftime('%Y-%m-%d-%H.%M.%S')
+    return today
+
 def get_bookmark(title, url, subreddit):
     newBookmark = bookmark.Bookmark(title, url)
     newBookmark.add_tag(subreddit)
@@ -67,13 +72,21 @@ def unsave_story(redditUserAgent, redditAccessToken, uniqueId):
 
 def get_saved_stories(redditUsername, redditUserAgent, redditAccessToken):
     home = str(Path.home())
-    netscapeBookmarks = bookmarkfiles.create_html_file(home, 'reddit-' + redditUsername)
+    today = get_today_string()
+    newFileName = home + '/' + today + '-reddit-' + redditUsername + '.html'
+    existingFile = os.path.isfile(newFileName)
+    if existingFile:
+        newFileName = newFileName = '-1'
+    else:
+        newFileName = newFileName
+    netscapeBookmarks = bookmarkfiles.create_html_file(newFileName)
 
     storiesUrl = redditOauthUrl + '/user/' + redditUsername + '/saved/.json'
     storiesHeaders = {
                         'Authorization': redditAccessToken,
                         'User-Agent': redditUserAgent,
                     }
+    # TODO: Add a flag or parameter for type (comments v links)
     storiesParams = {
                         't':'all',
                         'type': 'links',
@@ -97,8 +110,7 @@ def get_saved_stories(redditUsername, redditUserAgent, redditAccessToken):
             bookmarkfiles.write_html_bookmark(netscapeBookmarks,
                     newBookmark.title, newBookmark.url, newBookmark.tagString)
             unsave_story(redditUserAgent, redditAccessToken, uniqueId)
-
-        if url != permalink:
+        elif url != permalink:
             newBookmarkUrl = get_bookmark(title, url, subreddit)
             bookmarkfiles.write_html_bookmark(netscapeBookmarks,
                     newBookmarkUrl.title, newBookmarkUrl.url, newBookmarkUrl.tagString)
@@ -109,5 +121,7 @@ def get_saved_stories(redditUsername, redditUserAgent, redditAccessToken):
             bookmarkfiles.write_html_bookmark(netscapeBookmarks,
                     newBookmarkPerma.title, newBookmarkPerma.url, newBookmarkPerma.tagString)
             unsave_story(redditUserAgent, redditAccessToken, uniqueId)
+        else:
+            print('url status unknown')
 
     bookmarkfiles.write_html_footer(netscapeBookmarks)
