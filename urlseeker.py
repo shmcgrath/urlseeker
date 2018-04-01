@@ -51,9 +51,10 @@ def main():
     logging.debug('main called')
     user = account_information();
     logging.debug('main finished')
-    accionewsblur.login(user['newsblurUsername'], user['newsblurPassword'])
-    accionewsblur.get_starred_stories()
-    #logging.debug(redditAccessToken)
+    #accionewsblur.login(user['newsblurUsername'], user['newsblurPassword'])
+    #accionewsblur.get_starred_stories()
+    redditAccessToken = accioreddit.login(user['redditUsername'], user['redditPassword'], user['redditClientId'], user['redditClientSecret'], user['redditUserAgent'])
+    accioreddit.get_saved_stories(user['redditUsername'], user['redditUserAgent'], redditAccessToken)
 
 if __name__ == '__main__':
     main()

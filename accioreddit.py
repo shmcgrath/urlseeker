@@ -46,7 +46,28 @@ def login(redditUser, redditPass, redditClientId, redditClientSecret, redditUser
 
     return redditAccessString
 
+def get_bookmark(title, url, subreddit):
+    newBookmark = bookmark.Bookmark(title, url)
+    newBookmark.add_tag('reddit:' + subreddit)
+    newBookmark.string_tags()
+
+    return newBookmark
+
+def unsave_story(redditUserAgent, redditAccessToken, uniqueId):
+    unsaveUrl = redditOauthUrl + '/api/unsave/'
+    unsaveHeaders = {
+                        'Authorization': redditAccessToken,
+                        'User-Agent': redditUserAgent,
+                    }
+    unsaveParams = {
+                        'id':uniqueId,
+                    }
+    unsave = requests.post(unsaveUrl, params=unsaveParams, headers=unsaveHeaders)
+
 def get_saved_stories(redditUsername, redditUserAgent, redditAccessToken):
+    home = str(Path.home())
+    netscapeBookmarks = bookmarkfiles.create_html_file(home, 'reddit-' + redditUsername)
+
     storiesUrl = redditOauthUrl + '/user/' + redditUsername + '/saved/.json'
     storiesHeaders = {
                         'Authorization': redditAccessToken,
@@ -56,19 +77,37 @@ def get_saved_stories(redditUsername, redditUserAgent, redditAccessToken):
                         't':'all',
                         'type': 'links',
                         'raw_json': '1',
+                        'limit':'none',
                     }
+
     
     stories = requests.get(storiesUrl, params=storiesParams, headers=storiesHeaders)
     storiesJson = stories.json()
-    #logging.debug(storiesJson)
     userSavedStories = storiesJson['data']['children']
-    #logging.info(userSavedStories)
 
     for story in userSavedStories:
-        logging.info(story['kind'])
-        """
-        logging.info(story['data']['title'])
-        logging.info(story['data']['url'])
-        logging.info(story['data']['permalink'])
-        logging.info(story['data']['subreddit'])
-        """
+        uniqueId = story['kind'] + '_' + story['data']['id']
+        title = story['data']['title']
+        url = story['data']['url']
+        permalink = 'https://www.reddit.com' + story['data']['permalink']
+        subreddit = story['data']['subreddit']
+
+        if url == permalink:
+            newBookmark = get_bookmark(title, url, subreddit)
+            bookmarkfiles.write_html_bookmark(netscapeBookmarks,
+                    newBookmark.title, newBookmark.url, newBookmark.tagString)
+            unsave_story(redditUserAgent, redditAccessToken, uniqueId)
+
+        if url != permalink:
+            newBookmarkUrl = get_bookmark(title, url, subreddit)
+            bookmarkfiles.write_html_bookmark(netscapeBookmarks,
+                    newBookmarkUrl.title, newBookmarkUrl.url, newBookmarkUrl.tagString)
+
+            newBookmarkPerma = get_bookmark(title, permalink, subreddit)
+            newBookmarkPerma.title = newBookmarkPerma.title + ' - reddit discussion'
+            newBookmarkPerma.tagString = newBookmarkPerma.tagString + ',reddit:discussion'
+            bookmarkfiles.write_html_bookmark(netscapeBookmarks,
+                    newBookmarkPerma.title, newBookmarkPerma.url, newBookmarkPerma.tagString)
+            unsave_story(redditUserAgent, redditAccessToken, uniqueId)
+
+    bookmarkfiles.write_html_footer(netscapeBookmarks)
