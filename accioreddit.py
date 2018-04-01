@@ -48,6 +48,7 @@ def login(redditUser, redditPass, redditClientId, redditClientSecret, redditUser
 
 def get_bookmark(title, url, subreddit):
     newBookmark = bookmark.Bookmark(title, url)
+    newBookmark.add_tag(subreddit)
     newBookmark.add_tag('reddit:' + subreddit)
     newBookmark.string_tags()
 
@@ -77,9 +78,8 @@ def get_saved_stories(redditUsername, redditUserAgent, redditAccessToken):
                         't':'all',
                         'type': 'links',
                         'raw_json': '1',
-                        'limit':'none',
+                        'limit':'1000',
                     }
-
     
     stories = requests.get(storiesUrl, params=storiesParams, headers=storiesHeaders)
     storiesJson = stories.json()

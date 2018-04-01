@@ -75,7 +75,7 @@ def get_bookmark_detail(starredStory):
 
     return newBookmark
 
-
+# MAKE IF CHECK LOOKING TO SEE IF THE STORY COUNT IS 0
 def get_starred_stories():
     home = str(Path.home())
     logging.debug('hit get_starred_stories')
