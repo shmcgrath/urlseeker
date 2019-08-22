@@ -1,6 +1,7 @@
 # -*- coding: UTF-8 -*-
 
 class Bookmark:
+    """ Bookmark class containing the title, url, and tags of a bookmark."""
     def __init__(self, title, url):
         self.title = title
         self.url = url
