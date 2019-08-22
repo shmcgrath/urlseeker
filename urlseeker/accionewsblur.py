@@ -98,6 +98,6 @@ def get_starred_stories():
             bookmarkfiles.write_html_bookmark(netscapeBookmarks,
                     newBookmark.title, newBookmark.url, newBookmark.tagString)
 
-        currentPage+=1
+            currentPage+=1
 
     bookmarkfiles.write_html_footer(netscapeBookmarks)
