@@ -10,7 +10,12 @@ import accioreddit
 from collections import Mapping
 import logging
 from logging.config import fileConfig
+import datetime
+from pathlib import Path
 
+def get_today_string():
+    today = datetime.datetime.now().strftime('%Y-%m-%d-%H.%M.%S')
+    return today
 
 def account_information():
     logging.debug('account_information started')
