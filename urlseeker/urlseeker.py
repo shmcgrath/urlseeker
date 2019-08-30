@@ -133,11 +133,10 @@ def main():
             accionewsblur.get_starred_stories()
         if args.reddit:
             logging.debug("reddit = true")
-            redditAccessToken = accioreddit.login(user["redditUsername"],
-                user["redditPassword"], user["redditClientId"],
-                user["redditClientSecret"], user["redditUserAgent"])
-            accioreddit.get_saved_stories(user["redditUsername"],
-                    user["redditUserAgent"], redditAccessToken)
+            accioreddit.login(user["redditUsername"], user["redditPassword"],
+                user["redditClientId"], user["redditClientSecret"],
+                user["redditUserAgent"])
+            accioreddit.get_saved_stories()
 
 if __name__ == "__main__":
     main()
