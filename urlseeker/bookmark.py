@@ -44,7 +44,7 @@ class HtmlFile:
             f"\n\t<DL>"
         )
 
-        print(f"Creating Netscape HTML Bookmarks file at {self.file_path}.")
+        print(f"Creating Netscape HTML Bookmarks file at {self.file_path}...")
         self.file_object.write(netscape_header)
 
     def write_footer(self):
