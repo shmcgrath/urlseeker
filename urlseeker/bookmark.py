@@ -1,5 +1,7 @@
 # -*- coding: UTF-8 -*-
 
+import datetime
+
 class Bookmark:
     """ Bookmark class containing the title, url, and tags of a bookmark."""
     def __init__(self, title, url):
@@ -29,11 +31,11 @@ class HtmlFile:
 
         currentDTS = datetime.datetime.now().strftime("%Y-%m-%d-%H.%M.%S")
         print("Creating Netscape HTML Bookmarks file at " + self.filePath)
-        self.fileObject.write(f"<!DOCTYPE NETSCAPE-Bookmark-file-1> \
-            \n\t<!--This is an automatically generated file. \
-            \n\tIt will be read and overwritten. \
-            \n\tDo Not Edit! --> \
-            \n\t<Title> {currentDTS} Bookmarks</Title> \
+        self.fileObject.write(f"<!DOCTYPE NETSCAPE-Bookmark-file-1>\
+            \n\t<!--This is an automatically generated file.\
+            \n\tIt will be read and overwritten.\
+            \n\tDo Not Edit! -->\
+            \n\t<Title> {currentDTS} Bookmarks</Title>\
             \n\t<H1> {currentDTS} Bookmarks</H1> \
             \n\t<DL>")
 
