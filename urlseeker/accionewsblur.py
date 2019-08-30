@@ -6,7 +6,6 @@ import logging
 import os
 import sys
 import bookmark
-import bookmarkfiles
 from collections import Mapping
 from pathlib import Path
 
@@ -84,20 +83,21 @@ def get_starred_stories():
 
     storiesUrl = newsblurUrl + '/reader/starred_stories'
 
-    netscapeBookmarks = bookmarkfiles.create_html_file(home, 'newsblur')
+    netscapeBookmarks = bookmark.create_html_file(home, 'newsblur')
 
     while currentPage < starredPages:
         storiesParams = {'page': currentPage,}
-        stories = requests.get(storiesUrl, params=storiesParams, cookies=newsblurCookies)
+        stories = requests.get(storiesUrl, params=storiesParams,
+                cookies=newsblurCookies)
         storiesRaw = stories.json()
         userStarredStories = storiesRaw['stories']
 
         print('Gathering starred stories from page ' + str(currentPage) + '.')
         for starredStory in userStarredStories:
             newBookmark = get_bookmark_detail(starredStory)
-            bookmarkfiles.write_html_bookmark(netscapeBookmarks,
+            bookmark.write_html_bookmark(netscapeBookmarks,
                     newBookmark.title, newBookmark.url, newBookmark.tagString)
 
             currentPage+=1
 
-    bookmarkfiles.write_html_footer(netscapeBookmarks)
+    bookmark.write_html_footer(netscapeBookmarks)

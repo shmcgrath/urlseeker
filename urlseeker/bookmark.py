@@ -21,7 +21,7 @@ class HtmlFile:
     """HtmlFile docstring"""
     def __init__(self, filePath):
         self.filePath = filePath
-        self.fileObject = None
+        self.fileObject = open(self.filePath, 'w')
 
     def create_file(self):
         """create_file creates the HTML bookmark file at the path of the
@@ -29,16 +29,13 @@ class HtmlFile:
 
         currentDTS = datetime.datetime.now().strftime('%Y-%m-%d-%H.%M.%S')
         print('Creating Netscape HTML Bookmarks file at ' + self.filePath)
-        htmlFile = open(self.filePath, 'w')
-        htmlFile.write(f"<!DOCTYPE NETSCAPE-Bookmark-file-1> \
+        self.fileObject.write(f"<!DOCTYPE NETSCAPE-Bookmark-file-1> \
             \n\t<!--This is an automatically generated file. \
             \n\tIt will be read and overwritten. \
             \n\tDo Not Edit! --> \
             \n\t<Title> {currentDTS} Bookmarks</Title> \
             \n\t<H1> {currentDTS} Bookmarks</H1> \
-            \n\t<DL>"
-
-        self.fileObject = htmlFile
+            \n\t<DL>")
 
     def write_footer(self):
         """write_footer docstring"""
@@ -58,7 +55,7 @@ class MarkdownFile:
     def __init__(self, filePath, bookmarkSource):
         self.filePath = filePath
         self.bookmarkSource = bookmarkSource
-        self.fileObject = None
+        self.fileObject = open(self.filePath, 'w')
 
     def create_file(self):
         """create_file creates the markdown bookmark file at the path of the
@@ -66,11 +63,9 @@ class MarkdownFile:
 
         currentDTS = datetime.datetime.now().strftime("%Y-%m-%d-%H.%M.%S")
         print('Creating Markdown Bookmarks file at ' + mdFile)
-        markdownFile = open(self.filePath, 'w')
-        markdownFile.write(f"# {currentDTS} {self.bookmarkSource} Bookmarks\n \
-                ## Bookmarks\n"
+        self.fileObject.write(f"# {currentDTS} {self.bookmarkSource} Bookmarks\n \
+                ## Bookmarks\n")
 
-        self.fileObject = markdownFile
 
     def write_footer(self):
         """write_footer docstring"""
@@ -78,7 +73,8 @@ class MarkdownFile:
         self.fileObject.write(f"\n## Bookmark File Information \
             \n- Created On: {currentDTS} \
             \n- Source: {self.bookmarkSource} \
-            \n- Created by: [urlseeker](https://github.com/shmcgrath/urlseeker)"
+            \n- Created by: \
+            [urlseeker](https://github.com/shmcgrath/urlseeker)")
         self.fileObject.close()
 
     def write_bookmark(self, bookmark):
