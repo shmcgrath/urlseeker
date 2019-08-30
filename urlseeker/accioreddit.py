@@ -1,32 +1,31 @@
 # -*- coding: UTF-8 -*-
 
-import requests
+import bookmark
+from collections import Mapping
+import datetime
 import json
 import logging
 import os
-import sys
-import bookmark
-import datetime
-import bookmarkfiles
-from collections import Mapping
 from pathlib import Path
+import requests
+import sys
 
-redditUrl = 'https://www.reddit.com'
-redditOauthUrl = 'https://oauth.reddit.com'
+REDDIT_URL = 'https://www.reddit.com'
+REDDIT_OAUTH_URL = 'https://oauth.reddit.com'
 
-def login(redditUser, redditPass, redditClientId, redditClientSecret, redditUserAgent):
+def login(user, passwd, client_id, client_secret, user_agent):
     global redditAccessToken
     global redditTokenType
     global redditCookies
-    loginUrl = redditUrl + '/api/v1/access_token'
-    loginAuth = requests.auth.HTTPBasicAuth(redditClientId, redditClientSecret)
+    loginUrl = REDDIT_URL + '/api/v1/access_token'
+    loginAuth = requests.auth.HTTPBasicAuth(client_id, client_secret)
     loginPostData = {
                     'grant_type': 'password',
-                    'username': redditUser,
-                    'password': redditPass,
+                    'username': user,
+                    'password': passwd,
                     }
     loginHeaders = {
-                    'user-agent': redditUserAgent,
+                    'user-agent': user_agent,
                     'Content-Type': 'application/x-www-form-urlencoded',
                     'Accept': 'application/json'
                     }
@@ -59,21 +58,21 @@ def get_bookmark(title, url, subreddit):
 
     return newBookmark
 
-def unsave_story(redditUserAgent, redditAccessToken, uniqueId):
-    unsaveUrl = redditOauthUrl + '/api/unsave/'
+def unsave_story(user_agent, redditAccessToken, uniqueId):
+    unsaveUrl = REDDIT_OAUTH_URL + '/api/unsave/'
     unsaveHeaders = {
                         'Authorization': redditAccessToken,
-                        'User-Agent': redditUserAgent,
+                        'User-Agent': user_agent,
                     }
     unsaveParams = {
                         'id':uniqueId,
                     }
     unsave = requests.post(unsaveUrl, params=unsaveParams, headers=unsaveHeaders)
 
-def get_saved_stories(redditUsername, redditUserAgent, redditAccessToken):
+def get_saved_stories(username, user_agent, redditAccessToken):
     home = str(Path.home())
     today = get_today_string()
-    newFileName = home + '/' + today + '-reddit-' + redditUsername + '.html'
+    newFileName = home + '/' + today + '-reddit-' + username + '.html'
     existingFile = os.path.isfile(newFileName)
     if existingFile:
         newFileName = newFileName = '-1'
@@ -81,10 +80,10 @@ def get_saved_stories(redditUsername, redditUserAgent, redditAccessToken):
         newFileName = newFileName
     netscapeBookmarks = bookmarkfiles.create_html_file(newFileName)
 
-    storiesUrl = redditOauthUrl + '/user/' + redditUsername + '/saved/.json'
+    storiesUrl = REDDIT_OAUTH_URL + '/user/' + username + '/saved/.json'
     storiesHeaders = {
                         'Authorization': redditAccessToken,
-                        'User-Agent': redditUserAgent,
+                        'User-Agent': user_agent,
                     }
     # TODO: Add a flag or parameter for type (comments v links)
     storiesParams = {
@@ -109,7 +108,7 @@ def get_saved_stories(redditUsername, redditUserAgent, redditAccessToken):
             newBookmark = get_bookmark(title, url, subreddit)
             bookmarkfiles.write_html_bookmark(netscapeBookmarks,
                     newBookmark.title, newBookmark.url, newBookmark.tagString)
-            unsave_story(redditUserAgent, redditAccessToken, uniqueId)
+            unsave_story(user_agent, redditAccessToken, uniqueId)
         elif url != permalink:
             newBookmarkUrl = get_bookmark(title, url, subreddit)
             bookmarkfiles.write_html_bookmark(netscapeBookmarks,
@@ -120,7 +119,7 @@ def get_saved_stories(redditUsername, redditUserAgent, redditAccessToken):
             newBookmarkPerma.tagString = newBookmarkPerma.tagString + ',reddit:discussion'
             bookmarkfiles.write_html_bookmark(netscapeBookmarks,
                     newBookmarkPerma.title, newBookmarkPerma.url, newBookmarkPerma.tagString)
-            unsave_story(redditUserAgent, redditAccessToken, uniqueId)
+            unsave_story(user_agent, redditAccessToken, uniqueId)
         else:
             print('url status unknown')
 
