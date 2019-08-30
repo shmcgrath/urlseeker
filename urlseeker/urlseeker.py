@@ -63,12 +63,11 @@ def main():
     user = account_information();
     logging.debug('main finished')
     parser = argparse.ArgumentParser(
-        formatter_class=argparse.RawDescriptionHelpFormatter,
         description="Move urls between local files and various online \
         services.",
         epilog="urlseeker on GitHub: https://github.com/shmcgrath/urlseeker")
     parser.add_argument("-t", "--type", action="store", type=str,
-            choices=["html", "markdown", "pinboard"],
+            choices=["csv", "html", "json", "markdown", "pinboard"],
             help="Set where to store or output  retrieved bookmarks. \
                     The default output is an HTML Netscape bookmark file.\n \
                     The following words  are accetped as arguments for this \
@@ -90,14 +89,25 @@ def main():
                     be automatically added. If a file extension/type is \
                     passed in as part of the path, it will be ignored and the \
                     filetype will be added to the end of the string.")
+    parser.add_argument("-i", "--input", action="store", type=str,
+            help="Set input file location and name. This argument is required \
+                    if any of the sources are local files.")
     parser.add_argument("-A", "--all", action="store_true",
-            help="Run urlseeker for all services. \
-                    Please note, this is the default behavior.")
+            help="Run urlseeker for all services. This does not include local \
+                    files. Please note, this is the default behavior.")
     #TODO: if -A is given do all but any ones that are also designated
+    parser.add_argument("-C", "--csv", action="store_true",
+            help="Run urlseeker for a local csv file.")
+    parser.add_argument("-F", "--file", action="store_true",
+            help="Run urlseeker for a local bookmark file (Netscape/HTML).")
     parser.add_argument("-H", "--hackernews", action="store_true",
             help="Run urlseeker for Hacker News.")
+    parser.add_argument("-J", "--json", action="store_true",
+            help="Run urlseeker for a local json file.")
+    parser.add_argument("-M", "--markdown", action="store_true",
+            help="Run urlseeker for a local markdown file.")
     parser.add_argument("-N", "--newsblur", action="store_true",
-            help="Run urlseeker for newsblur")
+            help="Run urlseeker for NewsBlur")
     parser.add_argument("-P", "--pinboard", action="store_true",
             help="Run urlseeker for Pinboard. If this option is selected and \
                     the output type is pinboard, the pinboard bookmarks will \
