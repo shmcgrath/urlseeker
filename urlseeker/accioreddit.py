@@ -81,7 +81,6 @@ def unsave_story(story_unique_id):
                     }
     unsave = requests.post(usave_url, params=usave_params,
             headers=usave_headers)
-    logging.info(f"unsave Status Code: {unsave.status_code}")
 
 def get_saved_stories():
     global reddit_access_string
@@ -95,7 +94,6 @@ def get_saved_stories():
     netscape_file.create_file()
 
     stories_url = f"{REDDIT_OAUTH_URL}/user/{reddit_user}/saved"
-    print(stories_url)
     stories_headers = {
                         "Authorization": reddit_access_string,
                         "User-Agent": reddit_user_agent,
