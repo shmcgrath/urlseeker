@@ -22,108 +22,104 @@ def login(user_login, passwd, client_id, client_secret, user_agent_login):
     global user = user_login
     global user_agent = user_agent_login
     login_url = f"{REDDIT_URL}/api/v1/access_token"
-    loginAuth = requests.auth.HTTPBasicAuth(client_id, client_secret)
-    loginPostData = {
+    login_auth = requests.auth.HTTPBasicAuth(client_id, client_secret)
+    login_post_data = {
                     "grant_type": "password",
                     "username": user,
                     "password": passwd,
                     }
-    loginHeaders = {
+    login_headers = {
                     "user-agent": user_agent,
                     "Content-Type": "application/x-www-form-urlencoded",
                     "Accept": "application/json"
                     }
 
+    login = requests.post(login_url, auth=login_auth, data=login_post_data,
+                            headers=login_headers)
 
-    login = requests.post(loginUrl, auth=loginAuth, data=loginPostData,
-                            headers=loginHeaders)
-    logging.info("==LOGIN INFORMATION==")
-    logging.info("Login Status Code: " + str(login.status_code))
+    logging.info(f"Login Status Code: {login.status_code}")
     global reddit_cookies = login.json()
-
     global access_token = reddit_cookies["access_token"]
+    logging.info(f"reddit access_token: {access_token}")
     global token_type = reddit_cookies["token_type"]
-    logging.info("reddit access token: " + access_token)
-    logging.info("reddit token type: " + token_type)
+    logging.info(f"reddit token_type: {token_type}")
 
-    redditAccessString = token_type + " " + access_token
+    access_string = f"{token_type} {access_token}"
 
-    return redditAccessString
+    return access_string
 
 def get_today_string():
     today = datetime.datetime.now().strftime("%Y-%m-%d-%H.%M.%S")
     return today
 
 def get_bookmark(title, url, subreddit):
-    newBookmark = bookmark.Bookmark(title, url)
-    newBookmark.add_tag(subreddit)
-    newBookmark.add_tag("reddit:" + subreddit)
-    newBookmark.string_tags()
+    new_bookmark = bookmark.Bookmark(title, url)
+    new_bookmark.add_tag(f"reddit:{subreddit}")
+    new_bookmark.string_tags()
 
-    return newBookmark
+    return new_bookmark
 
-def unsave_story(user_agent, access_token, uniqueId):
-    unsaveUrl = REDDIT_OAUTH_URL + "/api/unsave/"
+def unsave_story(story_unique_id):
+    unsaveUrl = f"{REDDIT_OAUTH_URL}/api/unsave/"
     unsaveHeaders = {
                         "Authorization": access_token,
                         "User-Agent": user_agent,
                     }
     unsaveParams = {
-                        "id":uniqueId,
+                        "id":story_unique_id,
                     }
-    unsave = requests.post(unsaveUrl, params=unsaveParams, headers=unsaveHeaders)
+    unsave = requests.post(unsaveUrl, params=unsaveParams,
+            headers=unsaveHeaders)
 
 def get_saved_stories():
     home = str(Path.home())
     today = get_today_string()
-    newFileName = home + "/" + today + "-reddit-" + user + ".html"
-    existingFile = os.path.isfile(newFileName)
-    if existingFile:
-        newFileName = newFileName = "-1"
-    else:
-        newFileName = newFileName
-    netscapeBookmarks = bookmarkfiles.create_html_file(newFileName)
+    netscape_file = bookmark.HtmlFile(f"{home}/{today}-reddit-{user}.html")
+    netscape_file.create_file()
 
-    storiesUrl = REDDIT_OAUTH_URL + "/user/" + user + "/saved/.json"
-    storiesHeaders = {
+    stories_url = f"{REDDIT_OAUTH_URL}/user/{user}/saved/.json"
+    stories_headers = {
                         "Authorization": access_token,
                         "User-Agent": user_agent,
                     }
     # TODO: Add a flag or parameter for type (comments v links)
-    storiesParams = {
+    stories_params = {
                         "t":"all",
                         "type": "links",
                         "raw_json": "1",
                         "limit":"1000",
                     }
-    stories = requests.get(storiesUrl, params=storiesParams, headers=storiesHeaders)
-    storiesJson = stories.json()
-    userSavedStories = storiesJson["data"]["children"]
+    stories = requests.get(stories_url, params=stories_params,
+        headers=stories_headers)
 
-    for story in userSavedStories:
-        uniqueId = story["kind"] + "_" + story["data"]["id"]
+    stories_json = stories.json()
+    usr_saved_stories = stories_json["data"]["children"]
+
+    for story in usr_saved_stories:
+        story_unique_id = f"{story['kind']}_{story['data']['id']}"
         title = story["data"]["title"]
         url = story["data"]["url"]
-        permalink = "https://www.reddit.com" + story["data"]["permalink"]
+        permalink = "https://www.reddit.com{story['data']['permalink']}"
         subreddit = story["data"]["subreddit"]
 
         if url == permalink:
-            newBookmark = get_bookmark(title, url, subreddit)
-            bookmarkfiles.write_html_bookmark(netscapeBookmarks,
-                    newBookmark.title, newBookmark.url, newBookmark.tagString)
-            unsave_story(user_agent, access_token, uniqueId)
-        elif url != permalink:
-            newBookmarkUrl = get_bookmark(title, url, subreddit)
-            bookmarkfiles.write_html_bookmark(netscapeBookmarks,
-                    newBookmarkUrl.title, newBookmarkUrl.url, newBookmarkUrl.tagString)
+            new_bookmark = get_bookmark(title, url, subreddit)
+            netscape_file.write_bookmark(new_bookmark)
 
-            newBookmarkPerma = get_bookmark(title, permalink, subreddit)
-            newBookmarkPerma.title = newBookmarkPerma.title + " - reddit discussion"
-            newBookmarkPerma.tagString = newBookmarkPerma.tagString + ",reddit:discussion"
-            bookmarkfiles.write_html_bookmark(netscapeBookmarks,
-                    newBookmarkPerma.title, newBookmarkPerma.url, newBookmarkPerma.tagString)
-            unsave_story(user_agent, access_token, uniqueId)
+            unsave_story(story_unique_id)
+
+        elif url != permalink:
+            new_bookmark_url = get_bookmark(title, url, subreddit)
+            netscape_file.write_bookmark(new_bookmark_url)
+
+            new_bookmark_perma = get_bookmark(title, permalink, subreddit)
+            new_bookmark_perma.title = new_bookmark_perma.title + " - reddit discussion"
+            new_bookmark_perma.tagString = new_bookmark_perma.tagString + ",reddit:discussion"
+            netscape_file.write_bookmark(new_bookmark_perma)
+
+            unsave_story(user_agent, access_token, story_unique_id)
+
         else:
             print("url status unknown")
 
-    bookmarkfiles.write_html_footer(netscapeBookmarks)
+    netscape_file.write_footer()
