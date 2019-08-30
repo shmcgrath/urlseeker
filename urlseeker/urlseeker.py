@@ -1,21 +1,21 @@
 #!/usr/bin/python3
 # -*- coding: UTF-8 -*-
 
-""" Module Docstring """
+""" Move bookmarks between local files and various online services."""
 
-import requests
-import json
-import os
-import sys
-import bookmark
-#import accionewsblur
-#import accioreddit
 import argparse
+import bookmark
 from collections import Mapping
+import datetime
+import json
 import logging
 from logging.config import fileConfig
-import datetime
+import os
 from pathlib import Path
+import requests
+import sys
+import accionewsblur
+import accioreddit
 
 def get_today_string():
     today = datetime.datetime.now().strftime('%Y-%m-%d-%H.%M.%S')
@@ -54,6 +54,8 @@ def account_information():
         'newsblurPassword': newsblurPassword,
     }
 
+def accionewsblur():
+
 def main():
     fileConfig('logging_config.ini')
     logging.getLogger(__name__).addHandler(logging.NullHandler())
@@ -63,7 +65,7 @@ def main():
     user = account_information();
     logging.debug('main finished')
     parser = argparse.ArgumentParser(
-        description="Move urls between local files and various online \
+        description="Move bookmarks between local files and various online \
         services.",
         epilog="urlseeker on GitHub: https://github.com/shmcgrath/urlseeker")
     parser.add_argument("-t", "--type", action="store", type=str,
@@ -77,7 +79,6 @@ def main():
                     Pinboard.in.\nIf Pinboard is the destination and a source, \
                     all non-Pinboard bookmarks will go to Pinboard and all \
                     Pinboard bookmarks will be pulled to an HTML bookmark file.")
-    # TODO: add CSV output support
     parser.add_argument("-o", "--output", action="store", type=str,
             help="Set output file location and name of bookmarks file. \
                     This string should be the complete path and file name \
@@ -121,24 +122,24 @@ def main():
             help="Run urlseeker for twitter.")
     args = parser.parse_args()
     logging.debug(args)
-    if args.newsblur:
-        logging.debug("newsblur = true")
-        """
-        accionewsblur.login(user['newsblurUsername'], user['newsblurPassword'])
-        accionewsblur.get_starred_stories()
-        """
-    if args.reddit:
-        logging.debug("reddit = true")
-        """
-        redditAccessToken = accioreddit.login(user['redditUsername'],
-            user['redditPassword'], user['redditClientId'],
-            user['redditClientSecret'], user['redditUserAgent'])
-        accioreddit.get_saved_stories(user['redditUsername'],
-                user['redditUserAgent'], redditAccessToken)
-        """
-    if (not args.all and not args.hackernews and not args.newsblur and
-            not args.pinboard and not args.reddit and not args.twitter):
-        logging.debug("-AHNPRT not set. This will run all.")
+    if args.all:
+    else:
+        if args.newsblur:
+            logging.debug("newsblur = true")
+            """
+            accionewsblur.login(user['newsblurUsername'],
+                user['newsblurPassword'])
+            accionewsblur.get_starred_stories()
+            """
+        if args.reddit:
+            logging.debug("reddit = true")
+            """
+            redditAccessToken = accioreddit.login(user['redditUsername'],
+                user['redditPassword'], user['redditClientId'],
+                user['redditClientSecret'], user['redditUserAgent'])
+            accioreddit.get_saved_stories(user['redditUsername'],
+                    user['redditUserAgent'], redditAccessToken)
+            """
 
 if __name__ == '__main__':
     main()
