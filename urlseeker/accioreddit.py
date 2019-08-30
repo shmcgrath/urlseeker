@@ -12,16 +12,24 @@ import sys
 
 REDDIT_URL = "https://www.reddit.com"
 REDDIT_OAUTH_URL = "https://oauth.reddit.com"
+global reddit_access_string
 global reddit_access_token
 global reddit_cookies
 global reddit_token_type
 global reddit_user
 global reddit_user_agent
-global reddit_reddit_access_string
 
 def login(user_login, passwd, client_id, client_secret, user_agent_login):
+    global reddit_access_string
+    global reddit_access_token
+    global reddit_cookies
+    global reddit_token_type
+    global reddit_user
+    global reddit_user_agent
+
     reddit_user = user_login
     reddit_user_agent = user_agent_login
+
     login_url = f"{REDDIT_URL}/api/v1/access_token"
     login_auth = requests.auth.HTTPBasicAuth(client_id, client_secret)
     login_post_data = {
@@ -37,8 +45,8 @@ def login(user_login, passwd, client_id, client_secret, user_agent_login):
 
     login = requests.post(login_url, auth=login_auth, data=login_post_data,
                             headers=login_headers)
-
     logging.info(f"Login Status Code: {login.status_code}")
+
     reddit_cookies = login.json()
     reddit_access_token = reddit_cookies["access_token"]
     logging.info(f"reddit_access_token: {reddit_access_token}")
@@ -46,6 +54,8 @@ def login(user_login, passwd, client_id, client_secret, user_agent_login):
     logging.info(f"reddit_token_type: {reddit_token_type}")
 
     reddit_access_string = f"{reddit_token_type} {reddit_access_token}"
+
+    get_saved_stories()
 
 def get_today_string():
     today = datetime.datetime.now().strftime("%Y-%m-%d-%H.%M.%S")
@@ -59,34 +69,43 @@ def get_bookmark(title, url, subreddit):
     return new_bookmark
 
 def unsave_story(story_unique_id):
-    unsaveUrl = f"{REDDIT_OAUTH_URL}/api/unsave/"
-    unsaveHeaders = {
-                        "Authorization": reddit_access_token,
+    global reddit_access_string
+    global reddit_user_agent
+    usave_url = f"{REDDIT_OAUTH_URL}/api/unsave/"
+    usave_headers = {
+                        "Authorization": reddit_access_string,
                         "User-Agent": reddit_user_agent,
                     }
-    unsaveParams = {
+    usave_params = {
                         "id":story_unique_id,
                     }
-    unsave = requests.post(unsaveUrl, params=unsaveParams,
-            headers=unsaveHeaders)
+    unsave = requests.post(usave_url, params=usave_params,
+            headers=usave_headers)
+    logging.info(f"unsave Status Code: {unsave.status_code}")
 
 def get_saved_stories():
+    global reddit_access_string
+    global reddit_user
+    global reddit_user_agent
+
     home = str(Path.home())
     today = get_today_string()
+
     netscape_file = bookmark.HtmlFile(f"{home}/{today}-reddit-{reddit_user}.html")
     netscape_file.create_file()
 
-    stories_url = f"{REDDIT_OAUTH_URL}/user/{reddit_user}/saved/.json"
+    stories_url = f"{REDDIT_OAUTH_URL}/user/{reddit_user}/saved"
+    print(stories_url)
     stories_headers = {
-                        "Authorization": reddit_access_token,
+                        "Authorization": reddit_access_string,
                         "User-Agent": reddit_user_agent,
                     }
     # TODO: Add a flag or parameter for type (comments v links)
     stories_params = {
                         "t":"all",
                         "type": "links",
-                        "raw_json": "1",
                         "limit":"1000",
+                        "raw_json": "1",
                     }
     stories = requests.get(stories_url, params=stories_params,
         headers=stories_headers)

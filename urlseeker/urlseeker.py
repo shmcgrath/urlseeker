@@ -136,7 +136,6 @@ def main():
             accioreddit.login(user["redditUsername"], user["redditPassword"],
                 user["redditClientId"], user["redditClientSecret"],
                 user["redditUserAgent"])
-            accioreddit.get_saved_stories()
 
 if __name__ == "__main__":
     main()
