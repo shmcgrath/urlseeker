@@ -99,7 +99,7 @@ def get_saved_stories():
         story_unique_id = f"{story['kind']}_{story['data']['id']}"
         title = story["data"]["title"]
         url = story["data"]["url"]
-        permalink = "https://www.reddit.com{story['data']['permalink']}"
+        permalink = f"https://www.reddit.com{story['data']['permalink']}"
         subreddit = story["data"]["subreddit"]
 
         if url == permalink:
@@ -113,8 +113,12 @@ def get_saved_stories():
             netscape_file.write_bookmark(new_bookmark_url)
 
             new_bookmark_perma = get_bookmark(title, permalink, subreddit)
-            new_bookmark_perma.title = new_bookmark_perma.title + " - reddit discussion"
-            new_bookmark_perma.tagString = new_bookmark_perma.tagString + ",reddit:discussion"
+            new_bookmark_perma.title = (
+                f"{new_bookmark_perma.title} - reddit discussion"
+            )
+            new_bookmark_perma.tagString = (
+                f"{new_bookmark_perma.tagString},reddit:discussion"
+            )
             netscape_file.write_bookmark(new_bookmark_perma)
 
             unsave_story(user_agent, access_token, story_unique_id)
