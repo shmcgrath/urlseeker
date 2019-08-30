@@ -62,8 +62,11 @@ def main():
     logging.debug('main called')
     user = account_information();
     logging.debug('main finished')
-    parser = argparse.ArgumentParser(description="Move urls between \
-            local files and various online services.")
+    parser = argparse.ArgumentParser(
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        description="Move urls between local files and various online \
+        services.",
+        epilog="urlseeker on GitHub: https://github.com/shmcgrath/urlseeker")
     parser.add_argument("-t", "--type", action="store", type=str,
             choices=["html", "markdown", "pinboard"],
             help="Set where to store or output  retrieved bookmarks. \
@@ -88,23 +91,24 @@ def main():
                     passed in as part of the path, it will be ignored and the \
                     filetype will be added to the end of the string.")
     parser.add_argument("-A", "--all", action="store_true",
-            help="run urlseeker for all services \
-                    this is the default behavior.")
+            help="Run urlseeker for all services. \
+                    Please note, this is the default behavior.")
     #TODO: if -A is given do all but any ones that are also designated
     parser.add_argument("-H", "--hackernews", action="store_true",
-            help="run urlseeker for hacker news")
+            help="Run urlseeker for Hacker News.")
     parser.add_argument("-N", "--newsblur", action="store_true",
-            help="run urlseeker for newsblur")
+            help="Run urlseeker for newsblur")
     parser.add_argument("-P", "--pinboard", action="store_true",
-            help="run urlseeker for pinboard. If this option is selected and \
+            help="Run urlseeker for Pinboard. If this option is selected and \
                     the output type is pinboard, the pinboard bookmarks will \
                     not be re-sent to pinboard. Instead, all pinboard \
-                    bookmarks will be pulled to a bookmark HTML file.")
+                    bookmarks will be pulled to a bookmark HTML file. \
+                    Any additional sources will be sent to Pinboard.")
     # TODO: add date range support for pulling down pinboard bookmarks
     parser.add_argument("-R", "--reddit", action="store_true",
-            help="run urlseeker for reddit")
+            help="Run urlseeker for reddit.")
     parser.add_argument("-T", "--twitter", action="store_true",
-            help="run urlseeker for twitter")
+            help="Run urlseeker for twitter.")
     args = parser.parse_args()
     logging.debug(args)
     if args.newsblur:
