@@ -12,24 +12,24 @@ import sys
 
 REDDIT_URL = "https://www.reddit.com"
 REDDIT_OAUTH_URL = "https://oauth.reddit.com"
-global access_token
+global reddit_access_token
 global reddit_cookies
-global token_type
-global user
-global user_agent
+global reddit_token_type
+global reddit_user
+global reddit_user_agent
 
 def login(user_login, passwd, client_id, client_secret, user_agent_login):
-    global user = user_login
-    global user_agent = user_agent_login
+    reddit_user = user_login
+    reddit_user_agent = user_agent_login
     login_url = f"{REDDIT_URL}/api/v1/access_token"
     login_auth = requests.auth.HTTPBasicAuth(client_id, client_secret)
     login_post_data = {
                     "grant_type": "password",
-                    "username": user,
+                    "username": reddit_user,
                     "password": passwd,
                     }
     login_headers = {
-                    "user-agent": user_agent,
+                    "user-agent": reddit_user_agent,
                     "Content-Type": "application/x-www-form-urlencoded",
                     "Accept": "application/json"
                     }
@@ -38,13 +38,13 @@ def login(user_login, passwd, client_id, client_secret, user_agent_login):
                             headers=login_headers)
 
     logging.info(f"Login Status Code: {login.status_code}")
-    global reddit_cookies = login.json()
-    global access_token = reddit_cookies["access_token"]
-    logging.info(f"reddit access_token: {access_token}")
-    global token_type = reddit_cookies["token_type"]
-    logging.info(f"reddit token_type: {token_type}")
+    reddit_cookies = login.json()
+    reddit_access_token = reddit_cookies["access_token"]
+    logging.info(f"reddit_access_token: {reddit_access_token}")
+    reddit_token_type = reddit_cookies["token_type"]
+    logging.info(f"reddit_token_type: {reddit_token_type}")
 
-    access_string = f"{token_type} {access_token}"
+    access_string = f"{reddit_token_type} {reddit_access_token}"
 
     return access_string
 
@@ -62,8 +62,8 @@ def get_bookmark(title, url, subreddit):
 def unsave_story(story_unique_id):
     unsaveUrl = f"{REDDIT_OAUTH_URL}/api/unsave/"
     unsaveHeaders = {
-                        "Authorization": access_token,
-                        "User-Agent": user_agent,
+                        "Authorization": reddit_access_token,
+                        "User-Agent": reddit_user_agent,
                     }
     unsaveParams = {
                         "id":story_unique_id,
@@ -74,13 +74,13 @@ def unsave_story(story_unique_id):
 def get_saved_stories():
     home = str(Path.home())
     today = get_today_string()
-    netscape_file = bookmark.HtmlFile(f"{home}/{today}-reddit-{user}.html")
+    netscape_file = bookmark.HtmlFile(f"{home}/{today}-reddit-{reddit_user}.html")
     netscape_file.create_file()
 
-    stories_url = f"{REDDIT_OAUTH_URL}/user/{user}/saved/.json"
+    stories_url = f"{REDDIT_OAUTH_URL}/user/{reddit_user}/saved/.json"
     stories_headers = {
-                        "Authorization": access_token,
-                        "User-Agent": user_agent,
+                        "Authorization": reddit_access_token,
+                        "User-Agent": reddit_user_agent,
                     }
     # TODO: Add a flag or parameter for type (comments v links)
     stories_params = {
@@ -121,7 +121,7 @@ def get_saved_stories():
             )
             netscape_file.write_bookmark(new_bookmark_perma)
 
-            unsave_story(user_agent, access_token, story_unique_id)
+            unsave_story(story_unique_id)
 
         else:
             print("url status unknown")
