@@ -17,6 +17,7 @@ global reddit_cookies
 global reddit_token_type
 global reddit_user
 global reddit_user_agent
+global reddit_reddit_access_string
 
 def login(user_login, passwd, client_id, client_secret, user_agent_login):
     reddit_user = user_login
@@ -44,7 +45,7 @@ def login(user_login, passwd, client_id, client_secret, user_agent_login):
     reddit_token_type = reddit_cookies["token_type"]
     logging.info(f"reddit_token_type: {reddit_token_type}")
 
-    access_string = f"{reddit_token_type} {reddit_access_token}"
+    reddit_access_string = f"{reddit_token_type} {reddit_access_token}"
 
 def get_today_string():
     today = datetime.datetime.now().strftime("%Y-%m-%d-%H.%M.%S")
