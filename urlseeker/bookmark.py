@@ -15,20 +15,20 @@ class Bookmark:
         self.tags.append(tag)
 
     def string_tags(self):
-        self.tagString = ','.join(map(str, self.tags))
+        self.tagString = ",".join(map(str, self.tags))
 
 class HtmlFile:
     """HtmlFile docstring"""
     def __init__(self, filePath):
         self.filePath = filePath
-        self.fileObject = open(self.filePath, 'w')
+        self.fileObject = open(self.filePath, "w")
 
     def create_file(self):
         """create_file creates the HTML bookmark file at the path of the
         HtmlFile object."""
 
-        currentDTS = datetime.datetime.now().strftime('%Y-%m-%d-%H.%M.%S')
-        print('Creating Netscape HTML Bookmarks file at ' + self.filePath)
+        currentDTS = datetime.datetime.now().strftime("%Y-%m-%d-%H.%M.%S")
+        print("Creating Netscape HTML Bookmarks file at " + self.filePath)
         self.fileObject.write(f"<!DOCTYPE NETSCAPE-Bookmark-file-1> \
             \n\t<!--This is an automatically generated file. \
             \n\tIt will be read and overwritten. \
@@ -39,7 +39,7 @@ class HtmlFile:
 
     def write_footer(self):
         """write_footer docstring"""
-        self.fileObject.write('\n\t</DL>')
+        self.fileObject.write("\n\t</DL>")
         self.fileObject.close()
 
     def write_bookmark(self, bookmark):
@@ -55,14 +55,14 @@ class MarkdownFile:
     def __init__(self, filePath, bookmarkSource):
         self.filePath = filePath
         self.bookmarkSource = bookmarkSource
-        self.fileObject = open(self.filePath, 'w')
+        self.fileObject = open(self.filePath, "w")
 
     def create_file(self):
         """create_file creates the markdown bookmark file at the path of the
         MarkdownFile object."""
 
         currentDTS = datetime.datetime.now().strftime("%Y-%m-%d-%H.%M.%S")
-        print('Creating Markdown Bookmarks file at ' + mdFile)
+        print("Creating Markdown Bookmarks file at " + mdFile)
         self.fileObject.write(f"# {currentDTS} {self.bookmarkSource} Bookmarks\n \
                 ## Bookmarks\n")
 
