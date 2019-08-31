@@ -18,10 +18,6 @@ import accioicloudtabs
 import accionewsblur
 import accioreddit
 
-def get_today_string():
-    today = datetime.datetime.now().strftime("%Y-%m-%d-%H.%M.%S")
-    return today
-
 def account_information():
     logging.debug("account_information started")
     try:
