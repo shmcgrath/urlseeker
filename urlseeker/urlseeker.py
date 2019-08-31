@@ -14,6 +14,7 @@ import os
 from pathlib import Path
 import requests
 import sys
+import accioicloudtabs
 import accionewsblur
 import accioreddit
 
@@ -104,6 +105,9 @@ def main():
             help="Run urlseeker for a local bookmark file (Netscape/HTML).")
     parser.add_argument("-H", "--hackernews", action="store_true",
             help="Run urlseeker for Hacker News.")
+    parser.add_argument("-I", "--icloudtabs", action="store_true",
+            help="Run urlseeker for iCloud Tabs. Note, this currently only \
+                    works on macOS.")
     parser.add_argument("-J", "--json", action="store_true",
             help="Run urlseeker for a local json file.")
     parser.add_argument("-M", "--markdown", action="store_true",
@@ -126,6 +130,9 @@ def main():
     if args.all:
         logging.debug("-A is flagged")
     else:
+        if args.icloudtabs:
+            logging.debug("icloudtabs = true")
+            accioicloudtabs.get_icloud_tabs()
         if args.newsblur:
             logging.debug("newsblur = true")
             accionewsblur.login(user["newsblurUsername"],
