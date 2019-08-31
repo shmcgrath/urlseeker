@@ -18,16 +18,7 @@ import accioicloudtabs
 import accionewsblur
 import accioreddit
 
-<<<<<<< Updated upstream
-def get_today_string():
-    today = datetime.datetime.now().strftime("%Y-%m-%d-%H.%M.%S")
-    return today
-
-def account_information():
-    logging.debug("account_information started")
-=======
 def get_account_information():
->>>>>>> Stashed changes
     try:
         import accountinfo
         logging.debug(f"Importing from accountinfo.py...")
