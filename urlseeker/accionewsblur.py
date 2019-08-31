@@ -53,11 +53,17 @@ def starred_pages():
 
     return starredPages
 
-def get_bookmark_detail(starredStory):
-    title = starredStory["story_title"]
-    url = starredStory["story_permalink"]
-    tags = starredStory["story_tags"]
-    folders = starredStory["user_tags"]
+def get_bookmark_detail(story):
+    title = story["story_title"]
+    url = story["story_permalink"]
+    tags = story["story_tags"]
+    tags_user = story["user_tags"]
+    folders = story["user_tags"]
+    story_timestamp = story["story_timestamp"]
+    starred_timestamp = story["starred_timestamp"]
+    author = story["story_authors"]
+    story_date = story["story_date"]
+    story_content = story["story_content"]
 
     newBookmark = bookmark.Bookmark(title, url);
 
@@ -83,7 +89,6 @@ def unstar_story(story_hash):
 
 # MAKE IF CHECK LOOKING TO SEE IF THE STORY COUNT IS 0
 def get_starred_stories():
-    logging.debug("hit get_starred_stories")
     home = str(Path.home())
     today = datetime.datetime.now().strftime("%Y-%m-%d-%H.%M.%S")
     currentPage = 1
