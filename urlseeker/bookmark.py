@@ -39,7 +39,9 @@ class HtmlFile:
             f"\n\t<!--This is an automatically generated file."
             f"\n\tIt will be read and overwritten."
             f"\n\tDo Not Edit! -->"
-            f"\n\t<Title> {self.current_dts} Bookmarks</Title>"
+            f'<META HTTP-EQUIV="Content-Type" CONTENT="text/html; '
+            f'charset=UTF-8">'
+            f"\n\t<TITLE> {self.current_dts} Bookmarks</Title>"
             f"\n\t<H1> {self.current_dts} Bookmarks</H1>"
             f"\n\t<DL>"
         )
