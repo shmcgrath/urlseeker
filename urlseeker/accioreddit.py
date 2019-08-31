@@ -56,6 +56,7 @@ def login(user_login, passwd, client_id, client_secret, user_agent_login):
     reddit_access_string = f"{reddit_token_type} {reddit_access_token}"
 
     get_saved_stories()
+    get_saved_comments()
 
 def get_today_string():
     today = datetime.datetime.now().strftime("%Y-%m-%d-%H.%M.%S")
@@ -112,17 +113,28 @@ def get_saved_stories():
     usr_saved_stories = stories_json["data"]["children"]
 
     for story in usr_saved_stories:
+        logging.debug(f"=== SAVED STORY ===")
+        logging.debug(story)
         story_unique_id = f"{story['kind']}_{story['data']['id']}"
         title = story["data"]["title"]
         url = story["data"]["url"]
         permalink = f"https://www.reddit.com{story['data']['permalink']}"
         subreddit = story["data"]["subreddit"]
+        category = story["data"]["category"]
+        domain = story["data"]["domain"]
+        selftext_html = story["data"]["selftext_html"]
+        selftext = story["data"]["selftext"]
+        author_flair_text = story["data"]["author_flair_text"]
+        created_utc = comment["data"]["created_utc"]
+        created = comment["data"]["created"]
+        author = comment["data"]["author"]
+        logging.debug(author)
 
         if url == permalink:
             new_bookmark = get_bookmark(title, url, subreddit)
             netscape_file.write_bookmark(new_bookmark)
 
-            unsave_story(story_unique_id)
+            #unsave_story(story_unique_id)
 
         elif url != permalink:
             new_bookmark_url = get_bookmark(title, url, subreddit)
@@ -137,7 +149,7 @@ def get_saved_stories():
             )
             netscape_file.write_bookmark(new_bookmark_perma)
 
-            unsave_story(story_unique_id)
+            #unsave_story(story_unique_id)
 
         else:
             print("url status unknown")
@@ -174,14 +186,33 @@ def get_saved_comments():
     usr_saved_comments = comments_json["data"]["children"]
 
     for comment in usr_saved_comments:
-        logging.debug(comment)
-        """
         comment_unique_id = f"{comment['kind']}_{comment['data']['id']}"
-        title = comment["data"]["title"]
-        url = comment["data"]["url"]
-        permalink = f"https://www.reddit.com{comment['data']['permalink']}"
+        logging.debug("=== SAVED COMMENT ===")
+        logging.debug(comment)
+        logging.debug(comment_unique_id)
+        title = comment["data"]["link_title"]
+        logging.debug(title)
+        url = comment["data"]["link_url"]
+        logging.debug(f"url: {url}")
+        permalink_link = comment["data"]["link_permalink"]
+        logging.debug(f"permalink_link: {permalink_link}")
+        permalink_comment = comment["data"]["permalink"]
+        logging.debug(f"permalink_comment: {permalink_comment}")
+        author = comment["data"]["author"]
+        logging.debug(author)
+        author_flair = comment["data"]["author_flair_text"]
+        logging.debug(author_flair)
         subreddit = comment["data"]["subreddit"]
+        logging.debug(subreddit)
+        body = comment["data"]["body"]
+        logging.debug(body)
+        body_html = comment["data"]["body_html"]
+        logging.debug(body_html)
+        created_utc = comment["data"]["created_utc"]
+        logging.debug(created_utc)
+        created = comment["data"]["created"]
 
+        """
         if url == permalink:
             new_bookmark = get_bookmark(title, url, subreddit)
             netscape_file.write_bookmark(new_bookmark)
