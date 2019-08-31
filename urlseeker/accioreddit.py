@@ -90,7 +90,7 @@ def get_saved_stories():
     home = str(Path.home())
     today = get_today_string()
 
-    netscape_file = bookmark.HtmlFile(f"{home}/{today}-reddit-{reddit_user}.html")
+    netscape_file = bookmark.HtmlFile(f"{home}/{today}-reddit-stories-{reddit_user}.html")
     netscape_file.create_file()
 
     stories_url = f"{REDDIT_OAUTH_URL}/user/{reddit_user}/saved"
@@ -143,3 +143,65 @@ def get_saved_stories():
             print("url status unknown")
 
     netscape_file.write_footer()
+
+def get_saved_comments():
+    global reddit_access_string
+    global reddit_user
+    global reddit_user_agent
+
+    home = str(Path.home())
+    today = get_today_string()
+
+    #netscape_file = bookmark.HtmlFile(f"{home}/{today}-reddit-comments-{reddit_user}.html")
+    #netscape_file.create_file()
+
+    comments_url = f"{REDDIT_OAUTH_URL}/user/{reddit_user}/saved"
+    comments_headers = {
+                        "Authorization": reddit_access_string,
+                        "User-Agent": reddit_user_agent,
+                    }
+    # TODO: Add a flag or parameter for type (comments v links)
+    comments_params = {
+                        "t":"all",
+                        "type": "comments",
+                        "limit":"1000",
+                        "raw_json": "1",
+                    }
+    comments = requests.get(comments_url, params=comments_params,
+        headers=comments_headers)
+
+    comments_json = comments.json()
+    usr_saved_comments = comments_json["data"]["children"]
+
+    for comment in usr_saved_comments:
+        logging.debug(comment)
+        """
+        comment_unique_id = f"{comment['kind']}_{comment['data']['id']}"
+        title = comment["data"]["title"]
+        url = comment["data"]["url"]
+        permalink = f"https://www.reddit.com{comment['data']['permalink']}"
+        subreddit = comment["data"]["subreddit"]
+
+        if url == permalink:
+            new_bookmark = get_bookmark(title, url, subreddit)
+            netscape_file.write_bookmark(new_bookmark)
+
+        elif url != permalink:
+            new_bookmark_url = get_bookmark(title, url, subreddit)
+            netscape_file.write_bookmark(new_bookmark_url)
+
+            new_bookmark_perma = get_bookmark(title, permalink, subreddit)
+            new_bookmark_perma.title = (
+                f"{new_bookmark_perma.title} - reddit discussion"
+            )
+            new_bookmark_perma.tagString = (
+                f"{new_bookmark_perma.tagString},reddit:discussion"
+            )
+            netscape_file.write_bookmark(new_bookmark_perma)
+
+
+        else:
+            print("url status unknown")
+        """
+
+    #netscape_file.write_footer()
