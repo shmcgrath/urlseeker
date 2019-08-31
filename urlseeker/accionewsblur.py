@@ -71,6 +71,16 @@ def get_bookmark_detail(starredStory):
 
     return newBookmark
 
+def unstar_story(story_hash):
+    """unstar_story docstring"""
+
+    unstar_url = f"{NEWSBLUR_URL}/reader/mark_story_hash_as_unstarred"
+    unstar_params = {
+        "story_hash": story_hash,
+    }
+    unstar = requests.post(unstar_url, params=unstar_params,
+        cookies=newsblurCookies)
+
 # MAKE IF CHECK LOOKING TO SEE IF THE STORY COUNT IS 0
 def get_starred_stories():
     logging.debug("hit get_starred_stories")
@@ -87,14 +97,15 @@ def get_starred_stories():
     while currentPage < starredPages:
         storiesParams = {"page": currentPage,}
         stories = requests.get(storiesUrl, params=storiesParams,
-                cookies=newsblurCookies)
+            cookies=newsblurCookies)
         storiesRaw = stories.json()
         userStarredStories = storiesRaw["stories"]
 
-        print(f"Gathering starred stories from page {currentPage}.")
+        print(f"Gathering starred stories from page {currentPage}...")
         for starredStory in userStarredStories:
             newBookmark = get_bookmark_detail(starredStory)
             netscapeFile.write_bookmark(newBookmark)
+            unstar_story(starredStory["story_hash"])
 
         currentPage+=1
 
