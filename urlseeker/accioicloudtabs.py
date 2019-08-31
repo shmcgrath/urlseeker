@@ -10,7 +10,9 @@ import sqlite3
 from sqlite3 import Error
 import sys
 
-def main():
+def get_icloud_tabs():
+    """ get_icloud_tabs docstring """
+
     CLOUD_TABS_LOCATION = f"{HOME}/Library/Safari/CloudTabs.db"
     HOME = str(Path.HOME())
     current_dts = datetime.datetime.now().strftime("%Y.%m.%d-%H.%M")
@@ -31,6 +33,9 @@ def main():
             netscapeFile.write_bookmark(row_bookmark)
 
     netscapeFile.write_footer()
+
+def main():
+    get_icloud_tabs()
 
 if __name__ == '__main__':
     main()
