@@ -17,6 +17,7 @@ import sys
 import accioicloudtabs
 import accionewsblur
 import accioreddit
+import acciotwitter
 
 def get_account_information():
     try:
@@ -166,6 +167,7 @@ def main():
                 user["reddit_user_agent"])
         if args.twitter:
             logging.debug("twitter = true")
+            acciotwitter.login(user)
 
 if __name__ == "__main__":
     main()
