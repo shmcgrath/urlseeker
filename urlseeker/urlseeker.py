@@ -17,6 +17,7 @@ import sys
 import accioicloudtabs
 import accionewsblur
 import accioreddit
+import acciotwitter
 
 def get_account_information():
     try:
@@ -85,7 +86,11 @@ def main():
     user = get_account_information();
 
     parser = argparse.ArgumentParser(
+<<<<<<< HEAD
         description="A bookmark wizard written in Python."
+=======
+        description="A bookmark wizard written in Python.",
+>>>>>>> twitter
         epilog="urlseeker on GitHub: https://github.com/shmcgrath/urlseeker"
     )
 
@@ -166,6 +171,10 @@ def main():
                 user["reddit_user_agent"])
         if args.twitter:
             logging.debug("twitter = true")
+<<<<<<< HEAD
+=======
+            acciotwitter.login(user)
+>>>>>>> twitter
 
 if __name__ == "__main__":
     main()
