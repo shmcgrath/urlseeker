@@ -86,7 +86,7 @@ def main():
     user = get_account_information();
 
     parser = argparse.ArgumentParser(
-        description="A bookmark wizard written in Python."
+        description="A bookmark wizard written in Python.",
         epilog="urlseeker on GitHub: https://github.com/shmcgrath/urlseeker"
     )
 
