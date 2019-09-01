@@ -15,7 +15,7 @@ from pathlib import Path
 import requests
 import sys
 import accioicloudtabs
-import accionewsblur
+import acciopinboard
 import accioreddit
 import acciotwitter
 
@@ -86,11 +86,7 @@ def main():
     user = get_account_information();
 
     parser = argparse.ArgumentParser(
-<<<<<<< HEAD
-        description="A bookmark wizard written in Python."
-=======
         description="A bookmark wizard written in Python.",
->>>>>>> twitter
         epilog="urlseeker on GitHub: https://github.com/shmcgrath/urlseeker"
     )
 
@@ -171,10 +167,11 @@ def main():
                 user["reddit_user_agent"])
         if args.twitter:
             logging.debug("twitter = true")
-<<<<<<< HEAD
-=======
             acciotwitter.login(user)
->>>>>>> twitter
+        if args.pinboard:
+            logging.debug("pinboard = true")
+            acciopinboard.get_recent_posts(user["pinboard_key"], 100)
+            acciopinboard.get_all_posts(user["pinboard_key"])
 
 if __name__ == "__main__":
     main()
