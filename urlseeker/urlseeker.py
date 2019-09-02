@@ -145,6 +145,9 @@ def main():
         help="Run urlseeker for reddit.")
     parser.add_argument("-T", "--twitter", action="store_true",
         help="Run urlseeker for twitter.")
+    parser.add_argument("-Y", "--youtube", action="store_true",
+        help="Run urlseeker for YouTube.")
+    # TODO: youtube support https://developers.google.com/youtube/v3/docs/
 
     args = parser.parse_args()
     logging.debug(f"args: {args}")
