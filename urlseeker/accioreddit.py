@@ -194,10 +194,9 @@ def get_saved_comments():
         logging.debug(title)
         url = comment["data"]["link_url"]
         logging.debug(f"url: {url}")
-        permalink_link = comment["data"]["link_permalink"]
-        permalink = f"https://www.reddit.com{comment['data']['permalink']}"
-        logging.debug(f"permalink_link: {permalink_link}")
-        permalink_comment = comment["data"]["permalink"]
+        permalink = comment["data"]["link_permalink"]
+        logging.debug(f"permalink: {permalink}")
+        permalink_comment = f"https://www.reddit.com{comment['data']['permalink']}"
         logging.debug(f"permalink_comment: {permalink_comment}")
         author = comment["data"]["author"]
         logging.debug(author)
@@ -205,14 +204,16 @@ def get_saved_comments():
         logging.debug(author_flair)
         subreddit = comment["data"]["subreddit"]
         logging.debug(subreddit)
-        body = comment["data"]["body"]
-        logging.debug(body)
         body_html = comment["data"]["body_html"]
         logging.debug(body_html)
         created_utc = comment["data"]["created_utc"]
         logging.debug(created_utc)
         created = comment["data"]["created"]
 
+        if str(author_flair).lower() == "none":
+            author_flair = ''
+        else:
+            author_flair = f'[{author_flair}]'
         if url == permalink:
             new_bookmark = get_bookmark(title, url, subreddit)
             netscape_file.write_bookmark(new_bookmark)
@@ -233,20 +234,17 @@ def get_saved_comments():
         else:
             print("url status unknown")
 
-        comment_link = f'https://reddit.com{permalink_comment}'
-        new_bookmark_comment = get_bookmark(title, comment_link, subreddit)
+        new_bookmark_comment = get_bookmark(title, permalink_comment, subreddit)
         new_bookmark_comment.title = (
             f"{new_bookmark_comment.title} - saved comment"
         )
-        new_bookmark_perma.tagString = (
-            f"{new_bookmark_comment.tagString},reddit:discussion"
-        )
         netscape_file.write_bookmark(new_bookmark_comment)
         comment_line = (
-                f'{body_html}\n<p>author: {author}'
-                f'\nauthor flair: {author_flair}</p>'
+                f'<p><b>saved comment:</b> {body_html}</p>'
+                f'<p><b>subreddit:</b> {subreddit}'
+                f'\n<b>author[flair]</b>: {author}{author_flair}</p>'
         )
-        netscape_file.write_comment(comment_line)
-        #unsave_story(comment_unique_id)
+        netscape_file.write_description(comment_line)
+        unsave_story(comment_unique_id)
 
     netscape_file.write_footer()
