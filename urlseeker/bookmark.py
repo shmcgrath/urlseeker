@@ -69,7 +69,7 @@ class HtmlFile:
 
         self.file_object.write(netscape_line)
 
-    def write_description(self, comment):
+    def write_description(self, description):
         """write_description docstring"""
 
         description_line = (f'\n\t<DD>{description}')
