@@ -69,6 +69,13 @@ class HtmlFile:
 
         self.file_object.write(netscape_line)
 
+    def write_comment(self, comment):
+        """write_comment docstring"""
+
+        comment_line = (f'\n\t<DD>{comment}')
+        self.file_object.write(comment_line)
+
+
 class MarkdownFile:
     """MarkdownFile docstring"""
     def __init__(self, file_path, bookmark_source, current_dts=None):

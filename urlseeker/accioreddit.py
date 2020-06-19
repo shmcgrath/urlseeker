@@ -55,7 +55,7 @@ def login(user_login, passwd, client_id, client_secret, user_agent_login):
 
     reddit_access_string = f"{reddit_token_type} {reddit_access_token}"
 
-    get_saved_stories()
+    #get_saved_stories()
     get_saved_comments()
 
 def get_today_string():
@@ -103,7 +103,7 @@ def get_saved_stories():
     stories_params = {
                         "t":"all",
                         "type": "links",
-                        "limit":"1000",
+                        "limit":"100",
                         "raw_json": "1",
                     }
     stories = requests.get(stories_url, params=stories_params,
@@ -125,16 +125,16 @@ def get_saved_stories():
         selftext_html = story["data"]["selftext_html"]
         selftext = story["data"]["selftext"]
         author_flair_text = story["data"]["author_flair_text"]
-        created_utc = comment["data"]["created_utc"]
-        created = comment["data"]["created"]
-        author = comment["data"]["author"]
+        created_utc = story["data"]["created_utc"]
+        created = story["data"]["created"]
+        author = story["data"]["author"]
         logging.debug(author)
 
         if url == permalink:
             new_bookmark = get_bookmark(title, url, subreddit)
             netscape_file.write_bookmark(new_bookmark)
 
-            #unsave_story(story_unique_id)
+            unsave_story(story_unique_id)
 
         elif url != permalink:
             new_bookmark_url = get_bookmark(title, url, subreddit)
@@ -149,7 +149,7 @@ def get_saved_stories():
             )
             netscape_file.write_bookmark(new_bookmark_perma)
 
-            #unsave_story(story_unique_id)
+            unsave_story(story_unique_id)
 
         else:
             print("url status unknown")
@@ -164,8 +164,8 @@ def get_saved_comments():
     home = str(Path.home())
     today = get_today_string()
 
-    #netscape_file = bookmark.HtmlFile(f"{home}/{today}-reddit-comments-{reddit_user}.html")
-    #netscape_file.create_file()
+    netscape_file = bookmark.HtmlFile(f"{home}/{today}-reddit-comments-{reddit_user}.html")
+    netscape_file.create_file()
 
     comments_url = f"{REDDIT_OAUTH_URL}/user/{reddit_user}/saved"
     comments_headers = {
@@ -176,7 +176,7 @@ def get_saved_comments():
     comments_params = {
                         "t":"all",
                         "type": "comments",
-                        "limit":"1000",
+                        "limit":"100",
                         "raw_json": "1",
                     }
     comments = requests.get(comments_url, params=comments_params,
@@ -195,6 +195,7 @@ def get_saved_comments():
         url = comment["data"]["link_url"]
         logging.debug(f"url: {url}")
         permalink_link = comment["data"]["link_permalink"]
+        permalink = f"https://www.reddit.com{comment['data']['permalink']}"
         logging.debug(f"permalink_link: {permalink_link}")
         permalink_comment = comment["data"]["permalink"]
         logging.debug(f"permalink_comment: {permalink_comment}")
@@ -212,7 +213,6 @@ def get_saved_comments():
         logging.debug(created_utc)
         created = comment["data"]["created"]
 
-        """
         if url == permalink:
             new_bookmark = get_bookmark(title, url, subreddit)
             netscape_file.write_bookmark(new_bookmark)
@@ -230,9 +230,23 @@ def get_saved_comments():
             )
             netscape_file.write_bookmark(new_bookmark_perma)
 
-
         else:
             print("url status unknown")
-        """
 
-    #netscape_file.write_footer()
+        comment_link = f'https://reddit.com{permalink_comment}'
+        new_bookmark_comment = get_bookmark(title, comment_link, subreddit)
+        new_bookmark_comment.title = (
+            f"{new_bookmark_comment.title} - saved comment"
+        )
+        new_bookmark_perma.tagString = (
+            f"{new_bookmark_comment.tagString},reddit:discussion"
+        )
+        netscape_file.write_bookmark(new_bookmark_comment)
+        comment_line = (
+                f'{body_html}\n<p>author: {author}'
+                f'\nauthor flair: {author_flair}</p>'
+        )
+        netscape_file.write_comment(comment_line)
+        #unsave_story(comment_unique_id)
+
+    netscape_file.write_footer()
