@@ -56,7 +56,7 @@ def login(user_login, passwd, client_id, client_secret, user_agent_login):
     reddit_access_string = f"{reddit_token_type} {reddit_access_token}"
 
     get_saved_stories()
-    #get_saved_comments()
+    get_saved_comments()
 
 def get_today_string():
     today = datetime.datetime.now().strftime("%Y-%m-%d-%H.%M.%S")
