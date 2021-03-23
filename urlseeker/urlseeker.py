@@ -5,7 +5,7 @@
 
 import argparse
 import bookmark
-from collections import Mapping
+from collections.abc import Mapping
 import datetime
 import json
 import logging
@@ -49,10 +49,10 @@ def get_account_information():
             or not reddit_client_secret or not reddit_user_agent
             or not newsblur_user or not newsblur_passwd
             or not pinboard_key or not pinboard_user or not pinboard_passwd
-            or not twitter_app_id or not twitter_api_key
-            or not twitter_api_secret_key or not twitter_access_token
-            or not twitter_access_token_secret
-            or not twitter_user or not twitter_passwd
+            #or not twitter_app_id or not twitter_api_key
+            #or not twitter_api_secret_key or not twitter_access_token
+            #or not twitter_access_token_secret
+            #or not twitter_user or not twitter_passwd
         ):
         logging.info(f"Missing information to generate user. Exiting...")
         exit(1)
